@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BigScreenDataShow")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20701d1575d11f0cd9ad8bd993a5b1196ce16ad7")]
 [assembly: System.Reflection.AssemblyProductAttribute("BigScreenDataShow")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BigScreenDataShow")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

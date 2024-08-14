@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\chen\\code\\新地址git\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj": {}
+    "D:\\Projects\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj": {}
   },
   "projects": {
-    "D:\\chen\\code\\新地址git\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj": {
+    "D:\\Projects\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\chen\\code\\新地址git\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj",
+        "projectUniqueName": "D:\\Projects\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj",
         "projectName": "BigScreenDataShow",
-        "projectPath": "D:\\chen\\code\\新地址git\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "D:\\chen\\code\\新地址git\\B2_工厂大屏展示工具\\BigScreenDataShow\\obj\\",
+        "projectPath": "D:\\Projects\\B2_工厂大屏展示工具\\BigScreenDataShow\\BigScreenDataShow.csproj",
+        "packagesPath": "D:\\.nuget\\packages",
+        "outputPath": "D:\\Projects\\B2_工厂大屏展示工具\\BigScreenDataShow\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\sofar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,6 +39,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -76,7 +82,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }
