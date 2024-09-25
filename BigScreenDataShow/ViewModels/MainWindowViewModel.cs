@@ -53,7 +53,7 @@ namespace BigScreenDataShow.ViewModels
         public MainWindowViewModel()
         {
             _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 1, 30);
+            _timer.Interval = new TimeSpan(0, 10, 0);
             _timer.Tick += _timer_Tick;
 
             _httpClient = new HttpClient();
@@ -80,7 +80,7 @@ namespace BigScreenDataShow.ViewModels
         private void RefreshVoltWithstandData(string startdate, string enddate)
         {
             string testcategory = "耐压";
-            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
+            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
 
             try
             {
@@ -107,7 +107,7 @@ namespace BigScreenDataShow.ViewModels
         private void RefreshT1Data(string startdate, string enddate)
         {
             string testcategory = "耐压";
-            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
+            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
 
             try
             {
@@ -134,7 +134,7 @@ namespace BigScreenDataShow.ViewModels
         private void RefreshT2Data(string startdate, string enddate)
         {
             string testcategory = "T2";
-            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
+            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
 
             try
             {
@@ -161,7 +161,7 @@ namespace BigScreenDataShow.ViewModels
         private void RefreshPackageData(string startdate, string enddate)
         {
             string testcategory = "包装";
-            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
+            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
 
             try
             {
