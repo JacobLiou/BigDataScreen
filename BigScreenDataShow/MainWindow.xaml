@@ -130,7 +130,7 @@
                             <TextBlock Text="合格数量"></TextBlock>
                             <TextBox Margin="10 0 0 0"
                                      Width="150"
-                                     Text="{Binding VoltwithstandDaily.TestNum}"
+                                     Text="{Binding VoltwithstandDaily.PassNum}"
                                      IsReadOnly="True" />
                         </StackPanel>
                         <lvc:PieChart Grid.Row="2"
