@@ -36,6 +36,18 @@ namespace BigScreenDataShow.ViewModels
         [ObservableProperty]
         private IEnumerable<ISeries> _packageSeries;
 
+        [ObservableProperty]
+        private DailyPassData _voltwithstandDaily;
+
+        [ObservableProperty]
+        private DailyPassData _t1Daily;
+
+        [ObservableProperty]
+        private DailyPassData _t2Daily;
+
+        [ObservableProperty]
+        private DailyPassData _packageDaily;
+
         private Random random = new Random();
 
         public MainWindowViewModel()
@@ -56,8 +68,8 @@ namespace BigScreenDataShow.ViewModels
 
         private void _timer_Tick(object sender, EventArgs e)
         {
-            string startdate = DateTime.Today.ToString("yyyy-MM-dd hh:mm:ss");
-            string enddate = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            string startdate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string enddate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             Task.Run(() => RefreshVoltWithstandData(startdate, enddate));
             Task.Run(() => RefreshT1Data(startdate, enddate));
@@ -70,16 +82,25 @@ namespace BigScreenDataShow.ViewModels
             string testcategory = "耐压";
             string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
 
-            var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
-            if (response != null && response.IsSuccessStatusCode)
+            try
             {
-                var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var voltWithstandData = JsonConvert.DeserializeObject<DailyPassData>(str);
-                Send(() => UpdateVoltWithstandData(voltWithstandData));
+                var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    VoltwithstandDaily = JsonConvert.DeserializeObject<DailyPassData>(str);
+                    Send(() => UpdateVoltWithstandData(VoltwithstandDaily));
+                }
+                else
+                {
+                    VoltwithstandDaily = new DailyPassData();
+                    Send(() => UpdateVoltWithstandData(VoltwithstandDaily));
+                }
             }
-            else
+            catch
             {
-                Send(() => UpdateVoltWithstandData(new DailyPassData()));
+                VoltwithstandDaily = new DailyPassData();
+                Send(() => UpdateVoltWithstandData(VoltwithstandDaily));
             }
         }
 
@@ -88,16 +109,25 @@ namespace BigScreenDataShow.ViewModels
             string testcategory = "耐压";
             string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
 
-            var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
-            if (response != null && response.IsSuccessStatusCode)
+            try
             {
-                var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var t1Data = JsonConvert.DeserializeObject<DailyPassData>(str);
-                Send(() => UpdateT1Data(t1Data));
+                var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    T1Daily = JsonConvert.DeserializeObject<DailyPassData>(str);
+                    Send(() => UpdateT1Data(T1Daily));
+                }
+                else
+                {
+                    T1Daily = new DailyPassData();
+                    Send(() => UpdateT1Data(T1Daily));
+                }
             }
-            else
+            catch
             {
-                Send(() => UpdateT1Data(new DailyPassData()));
+                T1Daily = new DailyPassData();
+                Send(() => UpdateT1Data(T1Daily));
             }
         }
 
@@ -106,16 +136,25 @@ namespace BigScreenDataShow.ViewModels
             string testcategory = "T2";
             string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
 
-            var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
-            if (response != null && response.IsSuccessStatusCode)
+            try
             {
-                var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var t2Data = JsonConvert.DeserializeObject<DailyPassData>(str);
-                Send(() => UpdateT2Data(t2Data));
+                var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    T2Daily = JsonConvert.DeserializeObject<DailyPassData>(str);
+                    Send(() => UpdateT2Data(T2Daily));
+                }
+                else
+                {
+                    T2Daily = new DailyPassData();
+                    Send(() => UpdateT2Data(T2Daily));
+                }
             }
-            else
+            catch
             {
-                Send(() => UpdateT2Data(new DailyPassData()));
+                T2Daily = new DailyPassData();
+                Send(() => UpdateT2Data(T2Daily));
             }
         }
 
@@ -124,16 +163,25 @@ namespace BigScreenDataShow.ViewModels
             string testcategory = "包装";
             string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate{startdate}=&enddate={enddate}";
 
-            var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
-            if (response != null && response.IsSuccessStatusCode)
+            try
             {
-                var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var packageData = JsonConvert.DeserializeObject<DailyPassData>(str);
-                Send(() => UpdatePackageData(packageData));
+                var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    PackageDaily = JsonConvert.DeserializeObject<DailyPassData>(str);
+                    Send(() => UpdatePackageData(PackageDaily));
+                }
+                else
+                {
+                    PackageDaily = new DailyPassData();
+                    Send(() => UpdatePackageData(PackageDaily));
+                }
             }
-            else
+            catch
             {
-                Send(() => UpdatePackageData(new DailyPassData()));
+                PackageDaily = new DailyPassData();
+                Send(() => UpdatePackageData(PackageDaily));
             }
         }
 
