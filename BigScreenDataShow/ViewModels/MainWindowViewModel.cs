@@ -20,6 +20,8 @@ namespace BigScreenDataShow.ViewModels
 
         private readonly DispatcherTimer _timer;
 
+        private readonly DispatcherTimer _agingtimer;
+
         private readonly HttpClient _httpClient;
 
         private readonly string _rootUrl = "https://localhost:7143";
@@ -48,13 +50,24 @@ namespace BigScreenDataShow.ViewModels
         [ObservableProperty]
         private DailyPassData _packageDaily;
 
+        [ObservableProperty]
+        private AgeDailyData _ageDailyData = new();
+
         private Random random = new Random();
 
         public MainWindowViewModel()
         {
+            //四个站工位
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 10, 0);
             _timer.Tick += _timer_Tick;
+            _timer.Start();
+
+            //老化产量
+            _agingtimer = new DispatcherTimer();
+            _agingtimer.Interval = new TimeSpan(1, 0, 0);
+            _agingtimer.Tick += _agingtimer_Tick;
+            _agingtimer.Start();
 
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(60);
@@ -63,6 +76,7 @@ namespace BigScreenDataShow.ViewModels
             {
                 await Task.Delay(1000);
                 _timer_Tick(null, null);
+                _agingtimer_Tick(null, null);
             });
         }
 
@@ -75,6 +89,47 @@ namespace BigScreenDataShow.ViewModels
             Task.Run(() => RefreshT1Data(startdate, enddate));
             Task.Run(() => RefreshT2Data(startdate, enddate));
             Task.Run(() => RefreshPackageData(startdate, enddate));
+        }
+
+        private void _agingtimer_Tick(object sender, EventArgs e)
+        {
+            string startdate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string enddate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Task.Run(() => RefreshAgingData(startdate, enddate));      
+        }
+
+        private void RefreshAgingData(string startdate, string enddate)
+        {
+            string agingtablecategory1 = "G3";
+            string agingtablecategory2 = "G4";
+            string agingtablecategory3 = "EBI";
+            string url1 = $@"{_rootUrl}/GetAgingPassData?agingtablecategory={agingtablecategory1}&startdate={startdate}&enddate={enddate}";
+            string url2 = $@"{_rootUrl}/GetAgingPassData?agingtablecategory={agingtablecategory2}&startdate={startdate}&enddate={enddate}";
+            string url3 = $@"{_rootUrl}/GetAgingPassData?agingtablecategory={agingtablecategory3}&startdate={startdate}&enddate={enddate}";
+            try
+            {
+                var response = _httpClient.GetAsync(url1).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    AgeDailyData.G3 = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();                   
+                }
+
+                response = _httpClient.GetAsync(url2).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    AgeDailyData.G4 = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                }
+
+                response = _httpClient.GetAsync(url3).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    AgeDailyData.EBI = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                }
+            }
+            catch
+            {
+            }
         }
 
         private void RefreshVoltWithstandData(string startdate, string enddate)

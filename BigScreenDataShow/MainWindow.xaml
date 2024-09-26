@@ -27,8 +27,8 @@
         </WindowChrome.WindowChrome>-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="18"></RowDefinition>
+            <RowDefinition Height="53"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -52,7 +52,7 @@
                         Orientation="Vertical">
                 <TextBlock FontSize="45"
                            FontWeight="Bold"
-                           Foreground="White"
+                           Foreground="#12AE23"
                            Margin="0 0 0 0">首航自动测试智能看板</TextBlock>
             </StackPanel>
 
@@ -75,7 +75,8 @@
                 <GroupBox Header="各机型产量"
                           Tag="&#xe614;"
                           Foreground="White"
-                          Margin="0 0 0 10">
+                          Margin="0 0 0 10"
+                          TextBlock.FontSize="25">
                 </GroupBox>
             </UniformGrid>
 
@@ -86,19 +87,52 @@
                           Tag="&#xe614;"
                           Foreground="White"
                           Margin="0 0 0 10"
-                          TextBlock.FontSize="30">
+                          TextBlock.FontSize="26">
                 </GroupBox>
                 <GroupBox Header="老化分时产量"
                           Tag="&#xe614;"
                           Foreground="White"
                           Margin="0 0 0 10"
-                          TextBlock.FontSize="30">
+                          TextBlock.FontSize="26">
+
                 </GroupBox>
                 <GroupBox Header="老化日产量趋势"
                           Tag="&#xe614;"
                           Foreground="White"
                           Margin="0 0 0 10"
-                          TextBlock.FontSize="30">
+                          TextBlock.FontSize="26">
+                    <Grid HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
+                                    Margin="8">
+                            <TextBlock Text="G3 日产量"></TextBlock>
+                            <TextBlock Text="{Binding AgeDailyData.G3}"
+                                       Margin="20 0 0 0"
+                                       Width="80" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="8">
+                            <TextBlock Text="G4 日产量"></TextBlock>
+                            <TextBlock Margin="20 0 0 0"
+                                       Width="80"
+                                       Text="{Binding AgeDailyData.G4}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    Margin="8">
+                            <TextBlock Text="EBI 日产量"></TextBlock>
+                            <TextBlock Margin="20 0 0 0"
+                                       Width="80"
+                                       Text="{Binding AgeDailyData.EBI}" />
+                        </StackPanel>
+                    </Grid>
                 </GroupBox>
             </UniformGrid>
 
@@ -107,9 +141,10 @@
                          Grid.Column="2">
                 <GroupBox Header="耐压测试工位"
                           Tag="&#xe614;"
+                          TextBlock.FontSize="20"
                           Foreground="White"
                           Margin="0 0 0 10">
-                    <Grid>
+                    <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -119,19 +154,17 @@
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
-                            <TextBox Text="{Binding VoltwithstandDaily.TestNum}"
-                                     Margin="10 0 0 0"
-                                     Width="150"
-                                     IsReadOnly="True" />
+                            <TextBlock Text="{Binding VoltwithstandDaily.TestNum}"
+                                       Margin="10 0 0 0"
+                                       Width="80" />
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
-                            <TextBox Margin="10 0 0 0"
-                                     Width="150"
-                                     Text="{Binding VoltwithstandDaily.PassNum}"
-                                     IsReadOnly="True" />
+                            <TextBlock Margin="10 0 0 0"
+                                       Width="80"
+                                       Text="{Binding VoltwithstandDaily.PassNum}" />
                         </StackPanel>
                         <lvc:PieChart Grid.Row="2"
                                       Series="{Binding VoltwithstandSeries}"
@@ -144,6 +177,7 @@
                 <GroupBox Header="T1测试工位"
                           Tag="&#xe614;"
                           Foreground="White"
+                          TextBlock.FontSize="20"
                           Margin="0 0 0 10">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -155,19 +189,17 @@
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
-                            <TextBox Text="{Binding T1Daily.TestNum}"
-                                     Margin="10 0 0 0"
-                                     Width="150"
-                                     IsReadOnly="True" />
+                            <TextBlock Text="{Binding T1Daily.TestNum}"
+                                       Margin="10 0 0 0"
+                                       Width="80" />
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
-                            <TextBox Margin="10 0 0 0"
-                                     Width="150"
-                                     Text="{Binding T1Daily.PassNum}"
-                                     IsReadOnly="True" />
+                            <TextBlock Margin="10 0 0 0"
+                                       Width="80"
+                                       Text="{Binding T1Daily.PassNum}" />
                         </StackPanel>
                         <lvc:PieChart Grid.Row="2"
                                       Series="{Binding T1Series}"
@@ -179,6 +211,7 @@
                 </GroupBox>
                 <GroupBox Header="T2测试工位"
                           Tag="&#xe614;"
+                          TextBlock.FontSize="20"
                           Foreground="White"
                           Margin="0 0 0 10">
                     <Grid>
@@ -191,19 +224,17 @@
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
-                            <TextBox Text="{Binding T2Daily.TestNum}"
-                                     Margin="10 0 0 0"
-                                     Width="150"
-                                     IsReadOnly="True" />
+                            <TextBlock Text="{Binding T2Daily.TestNum}"
+                                       Margin="10 0 0 0"
+                                       Width="80" />
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
-                            <TextBox Margin="10 0 0 0"
-                                     Width="150"
-                                     Text="{Binding T2Daily.PassNum}"
-                                     IsReadOnly="True" />
+                            <TextBlock Margin="10 0 0 0"
+                                       Width="80"
+                                       Text="{Binding T2Daily.PassNum}" />
                         </StackPanel>
                         <lvc:PieChart Grid.Row="2"
                                       Series="{Binding T2Series}"
@@ -215,6 +246,7 @@
                 </GroupBox>
                 <GroupBox Header="包装测试工位"
                           Tag="&#xe614;"
+                          TextBlock.FontSize="20"
                           Foreground="White"
                           Margin="0 0 0 10">
                     <Grid>
@@ -227,19 +259,17 @@
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
-                            <TextBox Text="{Binding PackageDaily.TestNum}"
-                                     Margin="10 0 0 0"
-                                     Width="150"
-                                     IsReadOnly="True" />
+                            <TextBlock Text="{Binding PackageDaily.TestNum}"
+                                       Margin="10 0 0 0"
+                                       Width="80" />
                         </StackPanel>
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
-                            <TextBox Margin="10 0 0 0"
-                                     Width="150"
-                                     Text="{Binding PackageDaily.PassNum}"
-                                     IsReadOnly="True" />
+                            <TextBlock Margin="10 0 0 0"
+                                       Width="80"
+                                       Text="{Binding PackageDaily.PassNum}" />
                         </StackPanel>
                         <lvc:PieChart Grid.Row="2"
                                       Series="{Binding PackageSeries}"
