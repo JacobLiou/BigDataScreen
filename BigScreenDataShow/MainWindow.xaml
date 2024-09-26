@@ -145,28 +145,31 @@
                           Foreground="White"
                           Margin="0 0 0 10">
                     <Grid Margin="5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <StackPanel Grid.Row="0"
                                     Orientation="Horizontal"
                                     Margin="3">
-                            <TextBlock Text="测试数量"></TextBlock>
-                            <TextBlock Text="{Binding VoltwithstandDaily.TestNum}"
+                                <TextBlock Text="测试数量"></TextBlock>
+                                <TextBlock Text="{Binding VoltwithstandDaily.TestNum}"
                                        Margin="10 0 0 0"
                                        Width="80" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
-                            <TextBlock Text="合格数量"></TextBlock>
-                            <TextBlock Margin="10 0 0 0"
+                                <TextBlock Text="合格数量"></TextBlock>
+                                <TextBlock Margin="10 0 0 0"
                                        Width="80"
                                        Text="{Binding VoltwithstandDaily.PassNum}" />
+                            </StackPanel>
                         </StackPanel>
-                        <lvc:PieChart Grid.Row="2"
+                        <GridSplitter Width="10" Background="Red" Visibility="Collapsed"></GridSplitter>
+                        <lvc:PieChart Grid.Column="1"
                                       Series="{Binding VoltwithstandSeries}"
                                       InitialRotation="-90"
                                       MinValue="0"
@@ -180,28 +183,29 @@
                           TextBlock.FontSize="20"
                           Margin="0 0 0 10">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Grid.Row="0"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
                             <TextBlock Text="{Binding T1Daily.TestNum}"
                                        Margin="10 0 0 0"
                                        Width="80" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
                             <TextBlock Margin="10 0 0 0"
                                        Width="80"
                                        Text="{Binding T1Daily.PassNum}" />
+                            </StackPanel>
                         </StackPanel>
-                        <lvc:PieChart Grid.Row="2"
+                        <lvc:PieChart Grid.Column="1"
                                       Series="{Binding T1Series}"
                                       InitialRotation="-90"
                                       MinValue="0"
@@ -215,28 +219,29 @@
                           Foreground="White"
                           Margin="0 0 0 10">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Grid.Row="0"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="测试数量"></TextBlock>
                             <TextBlock Text="{Binding T2Daily.TestNum}"
                                        Margin="10 0 0 0"
                                        Width="80" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     Margin="3">
                             <TextBlock Text="合格数量"></TextBlock>
                             <TextBlock Margin="10 0 0 0"
                                        Width="80"
                                        Text="{Binding T2Daily.PassNum}" />
+                            </StackPanel>
                         </StackPanel>
-                        <lvc:PieChart Grid.Row="2"
+                        <lvc:PieChart Grid.Column="1"
                                       Series="{Binding T2Series}"
                                       InitialRotation="-90"
                                       MinValue="0"
@@ -250,28 +255,29 @@
                           Foreground="White"
                           Margin="0 0 0 10">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
-                                    Orientation="Horizontal"
-                                    Margin="3">
-                            <TextBlock Text="测试数量"></TextBlock>
-                            <TextBlock Text="{Binding PackageDaily.TestNum}"
-                                       Margin="10 0 0 0"
-                                       Width="80" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Grid.Row="0"
+                                        Orientation="Horizontal"
+                                        Margin="3">
+                                <TextBlock Text="测试数量"></TextBlock>
+                                <TextBlock Text="{Binding PackageDaily.TestNum}"
+                                           Margin="10 0 0 0"
+                                           Width="80" />
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        Margin="3">
+                                <TextBlock Text="合格数量"></TextBlock>
+                                <TextBlock Margin="10 0 0 0"
+                                           Width="80"
+                                           Text="{Binding PackageDaily.PassNum}" />
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    Margin="3">
-                            <TextBlock Text="合格数量"></TextBlock>
-                            <TextBlock Margin="10 0 0 0"
-                                       Width="80"
-                                       Text="{Binding PackageDaily.PassNum}" />
-                        </StackPanel>
-                        <lvc:PieChart Grid.Row="2"
+                        <lvc:PieChart Grid.Column="1"
                                       Series="{Binding PackageSeries}"
                                       InitialRotation="-90"
                                       MinValue="0"
