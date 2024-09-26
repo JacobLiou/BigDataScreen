@@ -106,7 +106,7 @@ namespace BigScreenDataShow.ViewModels
 
         private void RefreshT1Data(string startdate, string enddate)
         {
-            string testcategory = "耐压";
+            string testcategory = "T1";
             string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
 
             try
