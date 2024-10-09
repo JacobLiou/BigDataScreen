@@ -10,6 +10,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +29,8 @@ namespace BigScreenDataShow.ViewModels
         private readonly DispatcherTimer _agingtimer;
 
         private readonly DispatcherTimer _aginghourtimer;
+
+        private readonly DispatcherTimer _agingdaytimer;
 
         private readonly HttpClient _httpClient;
 
@@ -60,25 +63,33 @@ namespace BigScreenDataShow.ViewModels
         [ObservableProperty]
         private AgeDailyData _ageDailyData;
 
+        #region 老化分时数据图表元素
         /// <summary>
-        /// 老化分时数据
+        /// 老化分时数据集合
         /// </summary>
-        [ObservableProperty]
-        private ObservableCollection<ISeries> _aging_hoursharing_yieldSeries;
+        public ObservableCollection<ObservableValue> aging_hoursharing_data { get; set; }
 
-        private List<ObservableValue> _observableValues;
+        [ObservableProperty]
+        private ISeries[] _aging_hoursharing_yieldSeries;
 
         [ObservableProperty]
         public Axis[] _aging_hoursharing_yieldXAxes;
+        #endregion
 
+        #region 老化日产量趋势图表元素
+        /// <summary>
+        /// 老化日产量趋势数据集合
+        /// </summary>
+        public ObservableCollection<ObservableValue> aging_daysharing_data { get; set; }
         /// <summary>
         /// 老化日产量趋势
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<ISeries> _aging_daysharing_yieldSeries;
+        private ISeries[] _aging_daysharing_yieldSeries;
 
         [ObservableProperty]
-        public Axis[] _aging_daysharing_yieldXAxes;
+        public Axis[] aging_daysharing_yieldXAxes;
+        #endregion
 
         private Random random = new Random();
 
@@ -104,6 +115,12 @@ namespace BigScreenDataShow.ViewModels
             _aginghourtimer.Tick += _aginghourtimer_Tick;
             _aginghourtimer.Start();
 
+            //老化日产量趋势
+            _agingdaytimer = new DispatcherTimer();
+            _agingdaytimer.Interval = new TimeSpan(4, 0, 0);
+            _agingdaytimer.Tick += _agingdaytimer_Tick;
+            _agingdaytimer.Start();
+
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(60);
 
@@ -113,6 +130,7 @@ namespace BigScreenDataShow.ViewModels
                 _timer_Tick(null, null);
                 _agingtimer_Tick(null, null);
                 _aginghourtimer_Tick(null, null);
+                _agingdaytimer_Tick(null, null);
             });
         }
 
@@ -121,19 +139,17 @@ namespace BigScreenDataShow.ViewModels
         /// </summary>
         private void InitAging_hoursharing_yield()
         {
-            Aging_hoursharing_yieldSeries = new ObservableCollection<ISeries>
+            aging_hoursharing_data = new ObservableCollection<ObservableValue>();
+            for(int i = 0;i < 24;i++)
+            {
+                aging_hoursharing_data.Add(new ObservableValue(0));
+            }
+            
+            Aging_hoursharing_yieldSeries = new ColumnSeries<ObservableValue>[]
            {
-               new ColumnSeries<int>
+               new ColumnSeries<ObservableValue>
                {
-                    Values = new ObservableCollection<int> {
-                        20, 50, 40,
-                        20, 40, 30,
-                        50, 20, 50,
-                        40, 20, 50,
-                        40, 20, 40,
-                        30, 50, 20,
-                        50, 40, 50,
-                        20, 50, 40 },
+                    Values = aging_hoursharing_data,
                     // Defines the distance between every bars in the series
                     Padding = 0,
                     // Defines the max width a bar can have
@@ -167,47 +183,16 @@ namespace BigScreenDataShow.ViewModels
         /// </summary>
         private void InitAging_daysharing_yield()
         {
-            _observableValues = new List<ObservableValue> {
-                new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-                 new ObservableValue(0),
-                new ObservableValue(0),
-
-                 new ObservableValue(0),
-            };
-            Aging_daysharing_yieldSeries = new ObservableCollection<ISeries>
+            aging_daysharing_data = new ObservableCollection<ObservableValue>();
+            for (int i = 0; i < 31; i++)
+            {
+                aging_daysharing_data.Add(new ObservableValue(0));
+            }
+            Aging_daysharing_yieldSeries = new LineSeries<ObservableValue>[]
             {
                new LineSeries<ObservableValue>
                {
-                    Values = _observableValues
+                    Values = aging_daysharing_data
                }
 
             };
@@ -267,6 +252,14 @@ namespace BigScreenDataShow.ViewModels
             Task.Run(() => RefreshAginghourData());
         }
 
+        private void _agingdaytimer_Tick(object sender, EventArgs e)
+        {
+            string startdate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string enddate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Task.Run(() => RefreshAgingdayData());
+        }
+
         private void RefreshAgingData(string startdate, string enddate)
         {
             string agingtablecategory1 = "G3";
@@ -302,102 +295,26 @@ namespace BigScreenDataShow.ViewModels
 
         private void RefreshAginghourData()
         {
-            var randomValue = random.Next(1, 10);
-
-            //Aging_hoursharing_yieldSeries[0].Values.
-            //月度三十一个值
-            //var monthObservableValues = new ObservableCollection<ObservableValue>
+            #region 模拟数据
+            //for (int i = 0; i < aging_hoursharing_data.Count();i++)
             //{
+            //    var randomValue = random.Next(10, 50);
+            //    var lastInstance = aging_hoursharing_data[i];
+            //    lastInstance.Value = randomValue;
+            //}
+            #endregion
+        }
 
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-
-            //     new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-
-            //     new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-
-            //    new(random.Next(1, 10)),
-            //};
-
-
-            //更新月度某个值
-            var lastInstance = _observableValues[_observableValues.Count - 1];
-            lastInstance.Value = randomValue;
-
-            //Aging_daysharing_yieldSeries = new ObservableCollection<ISeries>
+        private void RefreshAgingdayData()
+        {
+            #region 模拟数据
+            //for (int i = 0; i < aging_daysharing_data.Count(); i++)
             //{
-            //    new LineSeries<ObservableValue>
-            //    {
-            //        Values = _observableValues,
-            //        Fill = null
-            //    }
-            //};
-
-            ////日度24个值
-            //var dayObservableValues = new ObservableCollection<ObservableValue>
-            //{
-
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-
-            //     new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-
-            //    new ObservableValue(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new(random.Next(1, 10)),
-            //    new ObservableValue(random.Next(1, 10)),
-            //};
-            //Aging_hoursharing_yieldSeries = new ObservableCollection<ISeries>
-            //{
-            //    new LineSeries<ObservableValue>
-            //    {
-            //        Values = dayObservableValues,
-            //        Fill = null
-            //    }
-            //};
+            //    var randomValue = random.Next(10, 50);
+            //    var lastInstance = aging_daysharing_data[i];
+            //    lastInstance.Value = randomValue;
+            //}
+            #endregion
         }
 
         private void RefreshVoltWithstandData(string startdate, string enddate)
