@@ -66,6 +66,8 @@ namespace BigScreenDataShow.ViewModels
         [ObservableProperty]
         private ObservableCollection<ISeries> _aging_hoursharing_yieldSeries;
 
+        private List<ObservableValue> _observableValues;
+
         [ObservableProperty]
         public Axis[] _aging_hoursharing_yieldXAxes;
 
@@ -123,14 +125,14 @@ namespace BigScreenDataShow.ViewModels
            {
                new ColumnSeries<int>
                {
-                    Values = new ObservableCollection<int> { 
-                        20, 50, 40, 
-                        20, 40, 30, 
-                        50, 20, 50, 
+                    Values = new ObservableCollection<int> {
+                        20, 50, 40,
+                        20, 40, 30,
+                        50, 20, 50,
                         40, 20, 50,
                         40, 20, 40,
-                        30, 50, 20, 
-                        50, 40, 50, 
+                        30, 50, 20,
+                        50, 40, 50,
                         20, 50, 40 },
                     // Defines the distance between every bars in the series
                     Padding = 0,
@@ -145,14 +147,14 @@ namespace BigScreenDataShow.ViewModels
                 new Axis
                 {
                     // Use the labels property to define named labels.
-                    Labels = new string[] { 
+                    Labels = new string[] {
                         "0h", "1h", "2h",
                         "3h", "4h", "5h",
-                        "6h", "7h", "8h", 
+                        "6h", "7h", "8h",
                         "9h", "10h", "11h",
                         "12h", "13h", "14h",
-                        "15h", "16h", "17h", 
-                        "18h", "19h", "20h", 
+                        "15h", "16h", "17h",
+                        "18h", "19h", "20h",
                         "21h","22h", "23h"},
                     //LabelsRotation = -45,
                     LabelsPaint = new SolidColorPaint(SKColors.Yellow)
@@ -165,22 +167,47 @@ namespace BigScreenDataShow.ViewModels
         /// </summary>
         private void InitAging_daysharing_yield()
         {
+            _observableValues = new List<ObservableValue> {
+                new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+                 new ObservableValue(0),
+                new ObservableValue(0),
+
+                 new ObservableValue(0),
+            };
             Aging_daysharing_yieldSeries = new ObservableCollection<ISeries>
             {
-               new LineSeries<int>
+               new LineSeries<ObservableValue>
                {
-                    Values = new ObservableCollection<int> {
-                        20, 50, 40,
-                        20, 40, 30,
-                        50, 20, 50,
-                        40, 20, 50,
-                        40, 20, 40,
-                        30, 50, 20,
-                        50, 40, 50,
-                        20, 50, 40,
-                        20, 50, 40,
-                        20, 40, 30,
-                        40,}
+                    Values = _observableValues
                }
 
             };
@@ -190,12 +217,12 @@ namespace BigScreenDataShow.ViewModels
                 new Axis
                 {
                     // Use the labels property to define named labels.
-                    Labels = new string[] { 
-                        "1d", "2d", "3d", 
+                    Labels = new string[] {
+                        "1d", "2d", "3d",
                         "4d", "5d", "6d",
-                        "7d", "8d", "9d", 
+                        "7d", "8d", "9d",
                         "10d", "11d", "12d",
-                        "13d", "14d", "15d", 
+                        "13d", "14d", "15d",
                         "16d", "17d", "18d",
                         "19d", "20d", "21d",
                         "22d","23d", "24d",
@@ -279,93 +306,98 @@ namespace BigScreenDataShow.ViewModels
 
             //Aging_hoursharing_yieldSeries[0].Values.
             //月度三十一个值
-            var monthObservableValues = new ObservableCollection<ObservableValue>
-            {
+            //var monthObservableValues = new ObservableCollection<ObservableValue>
+            //{
 
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
 
-                 new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
+            //     new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
 
-                 new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
+            //     new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
 
-                new(random.Next(1, 10)),
-            };
+            //    new(random.Next(1, 10)),
+            //};
 
-            Aging_daysharing_yieldSeries = new ObservableCollection<ISeries>
-            {
-                new LineSeries<ObservableValue>
-                {
-                    Values = monthObservableValues,
-                    Fill = null
-                }
-            };
 
-            //日度24个值
-            var dayObservableValues = new ObservableCollection<ObservableValue>
-            {
+            //更新月度某个值
+            var lastInstance = _observableValues[_observableValues.Count - 1];
+            lastInstance.Value = randomValue;
 
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
+            //Aging_daysharing_yieldSeries = new ObservableCollection<ISeries>
+            //{
+            //    new LineSeries<ObservableValue>
+            //    {
+            //        Values = _observableValues,
+            //        Fill = null
+            //    }
+            //};
 
-                 new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
+            ////日度24个值
+            //var dayObservableValues = new ObservableCollection<ObservableValue>
+            //{
 
-                new ObservableValue(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new(random.Next(1, 10)),
-                new ObservableValue(random.Next(1, 10)),
-            };
-            Aging_hoursharing_yieldSeries = new ObservableCollection<ISeries>
-            {
-                new LineSeries<ObservableValue>
-                {
-                    Values = dayObservableValues,
-                    Fill = null
-                }
-            };
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+
+            //     new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+
+            //    new ObservableValue(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new(random.Next(1, 10)),
+            //    new ObservableValue(random.Next(1, 10)),
+            //};
+            //Aging_hoursharing_yieldSeries = new ObservableCollection<ISeries>
+            //{
+            //    new LineSeries<ObservableValue>
+            //    {
+            //        Values = dayObservableValues,
+            //        Fill = null
+            //    }
+            //};
         }
 
         private void RefreshVoltWithstandData(string startdate, string enddate)
