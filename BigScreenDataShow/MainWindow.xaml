@@ -66,9 +66,9 @@
         <Grid Grid.Row="2"
               Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="1.8*"></ColumnDefinition>
-                <ColumnDefinition Width="1.2*"></ColumnDefinition>
+                <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <!--左边看板-->
             <UniformGrid Columns="1">
@@ -88,12 +88,65 @@
                           Foreground="White"
                           Margin="0 0 0 10"
                           TextBlock.FontSize="26">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="G3机型老化数"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="{Binding AgeDailyData.G3}"
+                                       Margin="20 0 0 0"
+                                       Width="80" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Column ="1">
+                            <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="G4机型老化数"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="{Binding AgeDailyData.G4}"
+                                       Margin="20 0 0 0"
+                                       Width="80" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Column ="2">
+                            <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="EBI机型老化数"></TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="3">
+                                <TextBlock Text="{Binding AgeDailyData.EBI}"
+                                       Margin="20 0 0 0"
+                                       Width="80" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </GroupBox>
                 <GroupBox Header="老化分时产量"
                           Tag="&#xe614;"
                           Foreground="White"
                           Margin="0 0 0 10"
                           TextBlock.FontSize="26">
+                    <lvc:CartesianChart Series="{Binding Aging_hoursharing_yieldSeries}"
+                                        XAxes="{Binding Aging_hoursharing_yieldXAxes}"
+                                        >
+                    </lvc:CartesianChart>
 
                 </GroupBox>
                 <GroupBox Header="老化日产量趋势"
@@ -101,38 +154,9 @@
                           Foreground="White"
                           Margin="0 0 0 10"
                           TextBlock.FontSize="26">
-                    <Grid HorizontalAlignment="Center"
-                          VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"
-                                    Orientation="Horizontal"
-                                    Margin="8">
-                            <TextBlock Text="G3 日产量"></TextBlock>
-                            <TextBlock Text="{Binding AgeDailyData.G3}"
-                                       Margin="20 0 0 0"
-                                       Width="80" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    Margin="8">
-                            <TextBlock Text="G4 日产量"></TextBlock>
-                            <TextBlock Margin="20 0 0 0"
-                                       Width="80"
-                                       Text="{Binding AgeDailyData.G4}" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="2"
-                                    Orientation="Horizontal"
-                                    Margin="8">
-                            <TextBlock Text="EBI 日产量"></TextBlock>
-                            <TextBlock Margin="20 0 0 0"
-                                       Width="80"
-                                       Text="{Binding AgeDailyData.EBI}" />
-                        </StackPanel>
-                    </Grid>
+                    <lvc:CartesianChart Series="{Binding Aging_daysharing_yieldSeries}"
+                                        XAxes="{Binding  Aging_daysharing_yieldXAxes}">
+                    </lvc:CartesianChart>
                 </GroupBox>
             </UniformGrid>
 
@@ -147,7 +171,7 @@
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
 
                         <StackPanel>
@@ -185,7 +209,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <StackPanel Grid.Row="0"
@@ -221,7 +245,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <StackPanel Grid.Row="0"
@@ -257,7 +281,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <StackPanel Grid.Row="0"

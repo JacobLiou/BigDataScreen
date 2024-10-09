@@ -1,10 +1,16 @@
 ﻿using BigScreenDataShow.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
+using LiveChartsCore.SkiaSharpView.Painting;
 using Newtonsoft.Json;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +27,8 @@ namespace BigScreenDataShow.ViewModels
         private readonly DispatcherTimer _timer;
 
         private readonly DispatcherTimer _agingtimer;
+
+        private readonly DispatcherTimer _aginghourtimer;
 
         private readonly HttpClient _httpClient;
 
@@ -51,12 +59,32 @@ namespace BigScreenDataShow.ViewModels
         private DailyPassData _packageDaily;
 
         [ObservableProperty]
-        private AgeDailyData _ageDailyData = new();
+        private AgeDailyData _ageDailyData;
+
+        /// <summary>
+        /// 老化分时数据
+        /// </summary>
+        [ObservableProperty]
+        private ISeries[] _aging_hoursharing_yieldSeries;
+
+        [ObservableProperty]
+        public Axis[] _aging_hoursharing_yieldXAxes;
+
+        /// <summary>
+        /// 老化日产量趋势
+        /// </summary>
+        [ObservableProperty]
+        private ISeries[] _aging_daysharing_yieldSeries;
+
+        [ObservableProperty]
+        public Axis[] aging_daysharing_yieldXAxes;
 
         private Random random = new Random();
 
         public MainWindowViewModel()
         {
+            InitAging_hoursharing_yield();
+            InitAging_daysharing_yield();
             //四个站工位
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 10, 0);
@@ -69,6 +97,12 @@ namespace BigScreenDataShow.ViewModels
             _agingtimer.Tick += _agingtimer_Tick;
             _agingtimer.Start();
 
+            //老化分时产量
+            _aginghourtimer = new DispatcherTimer();
+            _aginghourtimer.Interval = new TimeSpan(1, 0, 0);
+            _aginghourtimer.Tick += _aginghourtimer_Tick;
+            _aginghourtimer.Start();
+
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(60);
 
@@ -77,7 +111,68 @@ namespace BigScreenDataShow.ViewModels
                 await Task.Delay(1000);
                 _timer_Tick(null, null);
                 _agingtimer_Tick(null, null);
+                _aginghourtimer_Tick(null, null);
             });
+        }
+
+        /// <summary>
+        /// 初始化老化分时产量柱形图
+        /// </summary>
+        private void InitAging_hoursharing_yield()
+        {
+            Aging_hoursharing_yieldSeries = new ColumnSeries<int>[]
+           {
+               new ColumnSeries<int>
+               {
+                    Values = new ObservableCollection<int> { 20, 50, 40, 20, 40, 30, 50, 20, 50, 40, 20, 50, 40, 20, 40, 30, 50, 20, 50, 40, 50, 20, 50, 40 },
+                    // Defines the distance between every bars in the series
+                    Padding = 0,
+                    // Defines the max width a bar can have
+                    MaxBarWidth = double.PositiveInfinity
+               }
+
+           };
+
+            Aging_hoursharing_yieldXAxes = new Axis[]
+            {
+                new Axis
+                {
+                    // Use the labels property to define named labels.
+                    Labels = new string[] { "0h", "1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h",
+                                            "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h","22h", "23h"},
+                    //LabelsRotation = -45,
+                    LabelsPaint = new SolidColorPaint(SKColors.Yellow)
+                },
+            };
+        }
+
+        /// <summary>
+        /// 初始化老化日产量趋势折线图
+        /// </summary>
+        private void InitAging_daysharing_yield()
+        {
+            Aging_daysharing_yieldSeries = new LineSeries<int>[]
+            {
+               new LineSeries<int>
+               {
+                    Values = new ObservableCollection<int> { 20, 50, 40, 20, 40, 30, 50, 20, 50, 40, 20, 50, 40, 20, 40, 30, 50, 20, 50, 40, 50, 20, 50, 40,
+                                                             20, 50, 40, 20, 40, 30}                   
+               }
+
+            };
+
+            Aging_daysharing_yieldXAxes = new Axis[]
+            {
+                new Axis
+                {
+                    // Use the labels property to define named labels.
+                    Labels = new string[] { "1d", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "10d", "11d", "12d",
+                                            "13d", "14d", "15d", "16d", "17d", "18d", "19d", "20d", "21d", "22d","23d", "24d",
+                                            "25d", "26d", "27d", "28d", "29d", "30d", "31d"},
+                    //LabelsRotation = -45,
+                    LabelsPaint = new SolidColorPaint(SKColors.Yellow)
+                },
+            };
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -97,6 +192,19 @@ namespace BigScreenDataShow.ViewModels
             string enddate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             Task.Run(() => RefreshAgingData(startdate, enddate));      
+        }
+
+        /// <summary>
+        /// 老化分时数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _aginghourtimer_Tick(object sender, EventArgs e)
+        {
+            string startdate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string enddate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Task.Run(() => RefreshAginghourData());
         }
 
         private void RefreshAgingData(string startdate, string enddate)
@@ -130,6 +238,13 @@ namespace BigScreenDataShow.ViewModels
             catch
             {
             }
+        }
+
+        private void RefreshAginghourData()
+        {
+            var randomValue = random.Next(1, 10);
+
+            //Aging_hoursharing_yieldSeries[0].Values.
         }
 
         private void RefreshVoltWithstandData(string startdate, string enddate)
@@ -246,6 +361,7 @@ namespace BigScreenDataShow.ViewModels
             {
                 series.MaxRadialColumnWidth = 50;
                 series.DataLabelsSize = 50;
+                series.Fill = new SolidColorPaint(SKColors.DodgerBlue);
             }));
         }
 
@@ -255,6 +371,7 @@ namespace BigScreenDataShow.ViewModels
             {
                 series.MaxRadialColumnWidth = 50;
                 series.DataLabelsSize = 50;
+                series.Fill = new SolidColorPaint(SKColors.DodgerBlue);
             }));
         }
 
@@ -264,6 +381,7 @@ namespace BigScreenDataShow.ViewModels
             {
                 series.MaxRadialColumnWidth = 50;
                 series.DataLabelsSize = 50;
+                series.Fill = new SolidColorPaint(SKColors.DodgerBlue);
             }));
         }
 
@@ -273,6 +391,7 @@ namespace BigScreenDataShow.ViewModels
             {
                 series.MaxRadialColumnWidth = 50;
                 series.DataLabelsSize = 50;
+                series.Fill = new SolidColorPaint(SKColors.DodgerBlue);
             }));
         }
 
