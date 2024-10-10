@@ -57,8 +57,9 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2"
-                        Margin="0 25 0 0"
-                        Orientation="Horizontal">
+                        Margin="0 0 0 0"
+                        Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="{Binding RealTimeData.RealTime}" Foreground="White" FontSize="20"></TextBlock>
             </StackPanel>
         </Grid>
 

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -23,6 +24,8 @@ namespace BigScreenDataShow.ViewModels
         private readonly SynchronizationContext _synContext = new DispatcherSynchronizationContext(App.Current.Dispatcher);
 
         private readonly object _objLock = new();
+
+        private readonly DispatcherTimer _updaterealtimetimer;
 
         private readonly DispatcherTimer _timer;
 
@@ -63,6 +66,9 @@ namespace BigScreenDataShow.ViewModels
         [ObservableProperty]
         private AgeDailyData _ageDailyData;
 
+        [ObservableProperty]
+        private RealTimeData _realTimeData;
+
         #region 老化分时数据图表元素
         /// <summary>
         /// 老化分时数据集合
@@ -88,7 +94,7 @@ namespace BigScreenDataShow.ViewModels
         private ISeries[] _aging_daysharing_yieldSeries;
 
         [ObservableProperty]
-        public Axis[] aging_daysharing_yieldXAxes;
+        public Axis[] _aging_daysharing_yieldXAxes;
         #endregion
 
         private Random random = new Random();
@@ -111,7 +117,7 @@ namespace BigScreenDataShow.ViewModels
 
             //老化分时产量
             _aginghourtimer = new DispatcherTimer();
-            _aginghourtimer.Interval = new TimeSpan(0, 0, 1);
+            _aginghourtimer.Interval = new TimeSpan(0, 0, 2);
             _aginghourtimer.Tick += _aginghourtimer_Tick;
             _aginghourtimer.Start();
 
@@ -121,12 +127,18 @@ namespace BigScreenDataShow.ViewModels
             _agingdaytimer.Tick += _agingdaytimer_Tick;
             _agingdaytimer.Start();
 
+            _updaterealtimetimer = new DispatcherTimer();
+            _updaterealtimetimer.Interval = new TimeSpan(0, 0, 1);
+            _updaterealtimetimer.Tick += _updaterealtimetimer_Tick;
+            _updaterealtimetimer.Start();
+
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(60);
 
             Task.Run(async () =>
             {
                 await Task.Delay(1000);
+                _updaterealtimetimer_Tick(null, null);
                 _timer_Tick(null, null);
                 _agingtimer_Tick(null, null);
                 _aginghourtimer_Tick(null, null);
@@ -153,7 +165,11 @@ namespace BigScreenDataShow.ViewModels
                     // Defines the distance between every bars in the series
                     Padding = 0,
                     // Defines the max width a bar can have
-                    MaxBarWidth = double.PositiveInfinity
+                    MaxBarWidth = double.PositiveInfinity,
+                    //显示数据标签
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                    DataLabelsSize = 20,
+                    DataLabelsPosition = DataLabelsPosition.End
                }
 
            };
@@ -192,7 +208,11 @@ namespace BigScreenDataShow.ViewModels
             {
                new LineSeries<ObservableValue>
                {
-                    Values = aging_daysharing_data
+                    Values = aging_daysharing_data,
+                    //显示数据标签
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                    DataLabelsSize = 20,
+                    DataLabelsPosition = DataLabelsPosition.End
                }
 
             };
@@ -218,6 +238,11 @@ namespace BigScreenDataShow.ViewModels
                     LabelsPaint = new SolidColorPaint(SKColors.Yellow)
                 },
             };
+        }
+
+        private void _updaterealtimetimer_Tick(object sender, EventArgs e)
+        {
+            Task.Run(() => RefreshRealTimeData());
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -252,6 +277,11 @@ namespace BigScreenDataShow.ViewModels
             Task.Run(() => RefreshAginghourData());
         }
 
+        /// <summary>
+        /// 老化日产量趋势数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _agingdaytimer_Tick(object sender, EventArgs e)
         {
             string startdate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
@@ -262,6 +292,15 @@ namespace BigScreenDataShow.ViewModels
 
         private void RefreshAgingData(string startdate, string enddate)
         {
+            AgeDailyData = new AgeDailyData();
+            #region 模拟数据
+            //AgeDailyData.G3 = random.Next(1, 100).ToString();
+            //AgeDailyData.G4 = random.Next(1, 100).ToString();
+            //AgeDailyData.EBI = random.Next(1, 100).ToString();
+
+            #endregion
+
+            #region 正式逻辑
             string agingtablecategory1 = "G3";
             string agingtablecategory2 = "G4";
             string agingtablecategory3 = "EBI";
@@ -291,6 +330,7 @@ namespace BigScreenDataShow.ViewModels
             catch
             {
             }
+            #endregion
         }
 
         private void RefreshAginghourData()
@@ -315,6 +355,14 @@ namespace BigScreenDataShow.ViewModels
             //    lastInstance.Value = randomValue;
             //}
             #endregion
+        }
+
+        private void RefreshRealTimeData()
+        {
+            RealTimeData = new RealTimeData();
+            var currentTime = DateTime.Now;
+            RealTimeData.RealTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss") + $"  {System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(currentTime.DayOfWeek)}";
+     
         }
 
         private void RefreshVoltWithstandData(string startdate, string enddate)
