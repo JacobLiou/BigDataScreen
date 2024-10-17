@@ -14,6 +14,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -40,7 +41,7 @@ namespace BigScreenDataShow.ViewModels
 
         private readonly HttpClient _httpClient;
 
-        private readonly string _rootUrl = "https://localhost:7143";
+        private readonly string _rootUrl = ConfigurationManager.AppSettings["RootUrl"].ToString();//7143
 
         [ObservableProperty]
         private IEnumerable<ISeries> _voltwithstandSeries;
@@ -100,6 +101,18 @@ namespace BigScreenDataShow.ViewModels
         public Axis[] _aging_daysharing_yieldXAxes;
         #endregion
 
+        #region 月产量柱形图
+
+        public ObservableCollection<ObservableValue> package_monthsharing_data { get; set; }
+
+        [ObservableProperty]
+        private ISeries[] _package_monthsharing_yieldSeries;
+
+        [ObservableProperty]
+        public Axis[] _package_monthsharing_yieldXAxes;
+
+        #endregion
+
         private Random random = new Random();
 
 
@@ -108,6 +121,7 @@ namespace BigScreenDataShow.ViewModels
         {
             InitAging_hoursharing_yield();
             InitAging_daysharing_yield();
+            InitPackage_monthsharing_yield();
 
 
             //四个站工位
@@ -143,10 +157,13 @@ namespace BigScreenDataShow.ViewModels
             _httpClient.Timeout = TimeSpan.FromSeconds(60);
 
             Registry_Start();
-
-            RefreshAginghourData(true);
-            RefreshAgingdayData(true);
-
+            Task.Run(() =>
+            {
+                
+                RefreshAginghourData(true);
+                RefreshAgingdayData(true);
+                RefreshPackagemonthData();
+            });
 
             Task.Run(async () =>
             {
@@ -172,11 +189,13 @@ namespace BigScreenDataShow.ViewModels
             //每隔10min任务——查询H3线耐压,T1,T2,包装良率，更新饼图
             registry.Schedule(() => { _timer_Tick(null, null); }).NonReentrant().ToRunNow().AndEvery(10).Minutes();
             //每隔1h任务——查询H3线G3,G4,HBI机型老化通过数，更新文本
-            registry.Schedule(() => { _agingtimer_Tick(null, null); }).NonReentrant().ToRunNow().AndEvery(1).Hours();
+            registry.Schedule(() => { _agingtimer_Tick(null, null); }).NonReentrant().ToRunNow().AndEvery(1).Hours().At(55);
             //每隔1h间隔，每个小时的第50分钟任务——查询H3线G3,G4,HBI机型老化通过数之和(1小时)，更新柱形图
-            registry.Schedule(() => { _aginghourtimer_Tick(null, null); }).NonReentrant().ToRunEvery(1).Hours().At(50);
+            registry.Schedule(() => { _aginghourtimer_Tick(null, null); }).NonReentrant().ToRunEvery(1).Hours().At(55);
             //每隔1d间隔，每个天数的23:55任务——查询H3线G3,G4,HBI机型老化通过数之和(1天)，更新折线图
             registry.Schedule(() => { _agingdaytimer_Tick(null, null); }).NonReentrant().ToRunEvery(1).Days().At(23, 55);
+            //每隔1d间隔，每个天数的23:55任务——查询H3线包装通过数，更新月产量柱形图
+            registry.Schedule(() => { RefreshPackagemonthData(); }).NonReentrant().ToRunEvery(0).Days().At(23, 55);
 
             //每天0点任务——重置老化分时产量柱形图表
             registry.Schedule(() => { ResetChartAginghourData(); }).NonReentrant().ToRunEvery(0).Days().At(0, 0);
@@ -294,6 +313,55 @@ namespace BigScreenDataShow.ViewModels
                 },
             };
         }
+
+        /// <summary>
+        /// 初始化月产量柱形图
+        /// </summary>
+        private void InitPackage_monthsharing_yield()
+        {
+            package_monthsharing_data = new ObservableCollection<ObservableValue>();
+
+            for (int i = 0; i < 2; i++)
+            {
+                package_monthsharing_data.Add(new ObservableValue(0));
+            }
+            Package_monthsharing_yieldSeries = new ColumnSeries<ObservableValue>[]
+            {
+                new ColumnSeries<ObservableValue>
+                {
+                    Values = package_monthsharing_data,
+                    // Defines the distance between every bars in the series
+                    Padding = 0,
+                    // Defines the max width a bar can have
+                    MaxBarWidth = double.PositiveInfinity,
+                    //显示数据标签
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                    DataLabelsSize = 20,
+                    DataLabelsPosition = DataLabelsPosition.End
+                },
+               
+            };
+
+            Package_monthsharing_yieldXAxes = new Axis[]
+            {
+                new Axis
+                {
+                    Labels = new string[]
+                    {
+                        "上月","本月"
+                    },
+                    LabelsPaint = new SolidColorPaint
+                    {
+                        Color= SKColors.Yellow,
+                        SKTypeface = SKFontManager.Default.MatchCharacter('汉') // 汉语 
+                    } 
+
+                }
+            };
+
+
+        }
+             
 
         private void _updaterealtimetimer_Tick(object sender, EventArgs e)
         {
@@ -419,6 +487,34 @@ namespace BigScreenDataShow.ViewModels
             return int.Parse(g3) + int.Parse(g4) + int.Parse(ebi);
         }
 
+        private int GetPackageData(string startdate, string enddate)
+        {
+            string testcategory = "包装";
+            string url = $@"{_rootUrl}/GetPassData?testcategory={testcategory}&startdate={startdate}&enddate={enddate}";
+            DailyPassData packagedata = new DailyPassData();
+            try
+            {
+                var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var str = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    packagedata = JsonConvert.DeserializeObject<DailyPassData>(str);
+                    
+                }
+                else
+                {
+                    packagedata = new DailyPassData();
+                    
+                }
+            }
+            catch
+            {
+                packagedata = new DailyPassData();
+
+            }
+            return int.Parse(packagedata.PassNum);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -484,6 +580,43 @@ namespace BigScreenDataShow.ViewModels
             }
             else
                 aging_daysharing_data[day - 1].Value = GetAgingData(startdate, enddate);
+            #endregion
+        }
+
+        private void RefreshPackagemonthData()
+        {
+            #region 模拟数据
+            //for (int i = 0; i < package_monthsharing_data.Count(); i++)
+            //{
+            //    var randomValue = random.Next(600,1500);
+            //    var lastInstance = aging_daysharing_data[i];
+            //    lastInstance.Value = randomValue;
+            //}
+            #endregion
+
+            #region 正式逻辑
+            DateTime dateTime = DateTime.Now;
+            int year = dateTime.Year;
+            int month = dateTime.Month;
+            int day = dateTime.Day;
+            int datcount = DateTime.DaysInMonth(year, month);
+
+
+            string startdate = new DateTime(year, month, 1, 0, 0, 0).ToString("yyyy-MM-dd HH:mm:ss");
+            string enddate = new DateTime(year, month, datcount, 23, 59, 59).ToString("yyyy-MM-dd HH:mm:ss");
+
+            if(month == 1)
+                year = year - 1;
+
+            string lastmonthstartdate = new DateTime(year, month - 1, 1, 0, 0, 0).ToString("yyyy-MM-dd HH:mm:ss");
+            string lastmonthenddate = new DateTime(year, month - 1, 1, 23, 59, 59).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
+
+            //上月
+            package_monthsharing_data[0].Value = GetPackageData(lastmonthstartdate, lastmonthenddate);
+            //本月
+            package_monthsharing_data[1].Value = GetPackageData(startdate, enddate);
+
+
             #endregion
         }
 
